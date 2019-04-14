@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-	sass = require('gulp-ruby-sass'),
+	sass = require('gulp-sass');
 	autoprefixer = require('gulp-autoprefixer'),
 	minifycss = require('gulp-minify-css'),
 	rename = require('gulp-rename'),
@@ -11,20 +11,30 @@ var gulp = require('gulp'),
 	pngquant = require('imagemin-pngquant'),
 	critical = require('critical');
 
-gulp.task('process-styles', function(){
-	return sass('src/styles/main.scss', { 
-		style: 'expanded',
-		loadPath: [
-			'src/styles/_normalize.scss',
-			'src/styles/_colors.scss',
-			'src/styles/_icomoon.scss'
-		]})
-		.pipe(autoprefixer('last 2 version'))
-		.pipe(gulp.dest('dest/styles'))
+
+gulp.task('process-styles', function () {
+	return gulp.src('./src/styles/*.scss')
+		.pipe(sass().on('error', sass.logError))
+		.pipe(gulp.dest('./dest/styles'))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(minifycss())
-		.pipe(gulp.dest('dest/styles'));
-});
+		.pipe(gulp.dest('dest/styles'));;
+	});
+// gulp.task('process-styles', function(){
+// 	return sass('src/styles/main.scss', { 
+// 		style: 'expanded',
+// 		sourcemap: false,
+// 		loadPath: [
+// 			'src/styles/_normalize.scss',
+// 			'src/styles/_colors.scss',
+// 			'src/styles/_icomoon.scss'
+// 		]})
+// 		.pipe(autoprefixer('last 2 version'))
+// 		.pipe(gulp.dest('dest/styles'))
+// 		.pipe(rename({suffix: '.min'}))
+// 		// .pipe(minifycss())
+// 		.pipe(gulp.dest('dest/styles'));
+// });
 
 gulp.task('process-scripts', function(){
 	return gulp.src('src/scripts/*.js')
@@ -70,7 +80,7 @@ gulp.task('critical', ['process-styles'], function () {
 	});
 });
 
-gulp.task('default', function(){
+gulp.task('start', function(){
 	gulp.run('process-scripts');
 	gulp.run('templates');
 	gulp.run('critical');
